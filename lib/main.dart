@@ -37,9 +37,20 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
+  bool _isUnit1Completed = false; // State global pengunci Unit
 
-  final List<Widget> _screens = [
-    const LearnScreen(),
+  void _handleUnit1Completed() {
+    setState(() {
+      _isUnit1Completed = true;
+    });
+  }
+
+  // Menggunakan getter agar widget rebuild dengan state terbaru
+  List<Widget> get _screens => [
+    LearnScreen(
+      isUnit1Completed: _isUnit1Completed,
+      onUnit1Completed: _handleUnit1Completed,
+    ),
     const SimulationScreen(),
     const KanaScreen(),
     const ProfileScreen(),
@@ -58,9 +69,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: Column(
           children: [
             const TopStatusBar(),
-
             Expanded(
-              // WIDGET BARU: Efek transisi antar layar yang elegan
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 switchInCurve: Curves.easeOutCubic,
@@ -70,14 +79,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     opacity: animation,
                     child: SlideTransition(
                       position: Tween<Offset>(
-                        begin: const Offset(0.0, 0.05), // Bergeser sedikit dari bawah
+                        begin: const Offset(0.0, 0.05),
                         end: Offset.zero,
                       ).animate(animation),
                       child: child,
                     ),
                   );
                 },
-                // ValueKey memastikan Flutter tahu bahwa layarnya berubah
                 child: KeyedSubtree(
                   key: ValueKey<int>(_selectedIndex),
                   child: _screens[_selectedIndex],
